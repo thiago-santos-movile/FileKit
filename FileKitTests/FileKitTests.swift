@@ -703,6 +703,21 @@ class FileKitTests: XCTestCase {
         }
     }
 
+    // MARK: - NSCoding+FileKit
+
+    let fileCodingFile = File<DataCoding<NSUUID>>(path: .UserTemporary + "filekit_test_file_coding")
+
+    func testFileCoding() {
+        do {
+            let object = NSUUID()
+            try object |> fileCodingFile
+            let contents = try fileCodingFile.read().rawValue
+            XCTAssertEqual(contents, object)
+        } catch {
+            XCTFail(String(error))
+        }
+    }
+
     // MARK: - Watch
 
     func testWatch() {
@@ -712,6 +727,13 @@ class FileKitTests: XCTestCase {
             do {
                 let message = "Testing file system event when writing..."
                 try message.writeToPath(pathToWatch, atomically: false)
+            } catch {
+                XCTFail(String(error))
+            }
+        }
+        defer {
+            do {
+                try pathToWatch.deleteFile()
             } catch {
                 XCTFail(String(error))
             }
@@ -728,6 +750,8 @@ class FileKitTests: XCTestCase {
             watcher.close()
         }
         operation()
+        watcher.flushAsync()
         self.waitForExpectationsWithTimeout(10, handler: nil)
     }
+
 }

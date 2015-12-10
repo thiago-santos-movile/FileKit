@@ -51,8 +51,6 @@ public func |> <Data: DataType>(data: Data, file: File<Data>) throws {
     try file.write(data)
 }
 
-
-
 // MARK: - TextFile
 
 /// Returns `true` if both text files have the same path and encoding.
@@ -95,6 +93,15 @@ infix operator |~ {}
 @warn_unused_result
 public func |~ (file: TextFile, motif: String) -> [String] {
     return file.grep(motif, options: NSStringCompareOptions.RegularExpressionSearch)
+}
+
+// MARK: - DataCoding
+/// Writes `NSCoding` object to a file.
+///
+/// - Throws: `FileKitError.WriteToFileFail`
+///
+public func |> <Data: NSCoding>(data: Data, file: File<DataCoding<Data>>) throws {
+    try file.write(DataCoding(rawValue: data))
 }
 
 // MARK: - Path
