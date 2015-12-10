@@ -27,38 +27,27 @@
 
 import Foundation
 
-// public typealias CodingFile<T: NSCoding> = File<DataCoding<T>>
+extension NSCoding where Self: Readable {
 
-/// Wrapper to adapt any `NSCoding` object to `DataType`.
-public struct DataCoding<T: NSCoding>: RawRepresentable {
-    public typealias RawValue = T
-
-    public let rawValue: T
-    public init(rawValue: T) {
-        self.rawValue = rawValue
-    }
-}
-
-// MARK: Readable
-extension DataCoding: Readable {
-
-    public static func readFromPath(path: Path) throws -> DataCoding {
-        let data: NSData = try NSData.readFromPath(path)
-        guard let object = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? T else {
+    /// Creates `Self` from the contents of a Path.
+    ///
+    /// - Parameter path: The path being read from.
+    ///
+    public static func readFromPath(path: Path) throws -> Self {
+        let data = try NSData.readFromPath(path)
+        guard let object = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? Self else {
             throw FileKitError.ReadFromFileFail(path: path)
         }
-        return DataCoding(rawValue: object)
+        return object
     }
 
 }
 
-// MARK: Writable
-extension DataCoding: WritableConvertible {
+extension NSCoding where Self: WritableConvertible {
 
-    public typealias WritableType = NSData
-
+    /// Allows `self` to be written to a path.
     public var writable: NSData {
-        return NSKeyedArchiver.archivedDataWithRootObject(self.rawValue)
+        return NSKeyedArchiver.archivedDataWithRootObject(self)
     }
 
 }

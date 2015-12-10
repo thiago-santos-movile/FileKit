@@ -703,21 +703,6 @@ class FileKitTests: XCTestCase {
         }
     }
 
-    // MARK: - NSCoding+FileKit
-
-    let fileCodingFile = File<DataCoding<NSUUID>>(path: .UserTemporary + "filekit_test_file_coding")
-
-    func testFileCoding() {
-        do {
-            let object = NSUUID()
-            try object |> fileCodingFile
-            let contents = try fileCodingFile.read().rawValue
-            XCTAssertEqual(contents, object)
-        } catch {
-            XCTFail(String(error))
-        }
-    }
-
     // MARK: - Watch
 
     func testWatch() {

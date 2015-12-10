@@ -95,15 +95,6 @@ public func |~ (file: TextFile, motif: String) -> [String] {
     return file.grep(motif, options: NSStringCompareOptions.RegularExpressionSearch)
 }
 
-// MARK: - DataCoding
-/// Writes `NSCoding` object to a file.
-///
-/// - Throws: `FileKitError.WriteToFileFail`
-///
-public func |> <Data: NSCoding>(data: Data, file: File<DataCoding<Data>>) throws {
-    try file.write(DataCoding(rawValue: data))
-}
-
 // MARK: - Path
 
 /// Returns `true` if the standardized form of one path equals that of another
