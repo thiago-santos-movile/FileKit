@@ -580,6 +580,19 @@ class FileKitTests: XCTestCase {
         }
     }
 
+    // MARK: - TextFile - JSON
+    func testTextFileJSON() {
+        do {
+            let dict: TextFileJSONObject = ["FileKit": true, "Hello": "World"]
+            try textFile.writeJSON(dict)
+
+            let contents = try textFile.readJSON()
+            XCTAssertEqual(contents as? NSDictionary, dict as? NSDictionary)
+        } catch {
+            XCTFail(String(error))
+        }
+    }
+
     // MARK: - FileType
 
     func testFileTypeComparable() {

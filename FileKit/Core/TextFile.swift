@@ -215,3 +215,41 @@ extension TextFileStreamReader : SequenceType {
         }
     }
 }
+
+// MARK: json
+public typealias TextFileJSONObject = AnyObject
+extension TextFile {
+
+    /// Reads the file and returns an object.
+    ///
+    /// - Parameter options: options for reading JSON format
+    ///
+    /// - Throws: `FileKitError.ReadFromFileFail`
+    public func readJSON(options: NSJSONReadingOptions = []) throws -> TextFileJSONObject {
+        let string = try self.read()
+        guard let data = string.dataUsingEncoding(self.encoding) else {
+            throw FileKitError.ReadFromFileFail(path: path)
+        }
+        return try NSJSONSerialization.JSONObjectWithData(data, options: options) /*as? TextFileJSONObject*/
+    }
+
+    /// Writes an object as JSON format using the file's encoding.
+    ///
+    /// - Parameter object: The object to be written to the text file.
+    /// - Parameter options: options for writing into JSON format
+    /// - Parameter atomically: If `true`, the data is written to an
+    ///                               auxiliary file that is then renamed to the
+    ///                               file. If `false`, the data is written to
+    ///                               the file directly.
+    ///
+    /// - Throws: `FileKitError.WriteToFileFail`
+    ///
+    public func writeJSON(object: TextFileJSONObject, options: NSJSONWritingOptions = [], atomically: Bool = true) throws {
+        let data = try NSJSONSerialization.dataWithJSONObject(object, options : options)
+        guard let string = String(data: data, encoding: self.encoding) else {
+            throw FileKitError.WriteToFileFail(path: path)
+        }
+        try self.write(string, atomically: atomically)
+    }
+
+}
