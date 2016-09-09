@@ -242,7 +242,7 @@ public struct Path : StringLiteralConvertible, RawRepresentable, Hashable, Index
         let total = Swift.min(selfComponents.count, pathComponents.count)
 
         var index = 0
-        for index = 0; index < total; ++index {
+        for index = 0; index < total; index += 1 {
             if selfComponents[index].rawValue != pathComponents[index].rawValue {
                 break
             }
